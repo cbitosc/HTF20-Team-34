@@ -1,6 +1,30 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <style>
+    table {
+        width: 60%;
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    tr:nth-child(even) {
+        background-color: #eee;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 10px;
+
+    }
+    </style>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,12 +34,35 @@
 
     <title>Home</title>
   </head>
-  <body>
-    <h1>Welcome {{user.username}}</h1>
+  <body style="background-color: #EEE4FA;">
+    <br>
+    <center><h3>Welcome, {{user.username}}</h3><small>({{user.user_details.dept}} {{user.user_details.role}})</small>
  <a style="float:right" href="/logout">Logout</a> 
     <hr/>
 
-    {{faculty_details}}
+    {% if faculty_details %}
+            <table>
+                <tr>
+                    <th>Faculty</th>
+                    <th>Date of Leave</th>
+                    <th>Status</th>
+                    <th>Check</th>
+                </tr>
+                {% for row in faculty_details %}
+                <tr>
+                    <form method="post" action="/home">
+                    {% csrf_token %}
+                        <td>{{row.user}}</td>
+                        <td>{{row.date_of_leave}}</td>
+                        <td>{% if row.permission == -1 %}Pending {% elif row.permission == 0%}Accepted {% else %}Declined{% endif %}</td>
+                        <td><input type="submit" value="Check"></td>
+                        <input type="hidden" name="user" value={{row.user}}>
+                        <input type="hidden" name="date_of_leave" value={{row.date_of_leave|date:"Y-m-d"}}>
+                    </form>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
 
     <!-- Optional JavaScript; choose one of the two! -->
 
